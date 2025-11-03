@@ -9,6 +9,8 @@ const getAuthToken = async () => {
   return data.session?.access_token;
 };
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function UserManagementPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +23,7 @@ export default function UserManagementPage() {
   const fetchUsers = async () => {
     try {
       const token = await getAuthToken();
-      const response = await fetch('http://localhost:5000/api/admin/users', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -47,7 +49,7 @@ export default function UserManagementPage() {
     
     try {
       const token = await getAuthToken();
-      const response = await fetch('http://localhost:5000/api/admin/promote', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/promote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

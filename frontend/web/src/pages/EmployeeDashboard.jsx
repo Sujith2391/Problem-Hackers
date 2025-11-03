@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 import MealCard from '../components/employee/MealCard';
-import QRCodeModal from '../components/common/QRCodeModal.jsx';
+
 import { format, addDays } from 'date-fns'; // We use this to get tomorrow's date
 
 export default function EmployeeDashboard() {
@@ -11,7 +11,7 @@ export default function EmployeeDashboard() {
   const [menuItems, setMenuItems] = useState([]);
   const [confirmations, setConfirmations] = useState({});
   const [loading, setLoading] = useState(true);
-  const [showQRModalFor, setShowQRModalFor] = useState(null); // 2. Add new state
+
   const [userStatus, setUserStatus] = useState(null); // <-- ADD THIS
 
   // Get tomorrow's date in 'YYYY-MM-DD' format
@@ -260,21 +260,18 @@ export default function EmployeeDashboard() {
               items={groupedMenu.breakfast}
               confirmation={confirmations.breakfast}
               onConfirm={(confirmed) => handleConfirmation('breakfast', confirmed)}
-              onShowQR={() => setShowQRModalFor(confirmations.breakfast)}
             />
             <MealCard
               title="🍛 Lunch"
               items={groupedMenu.lunch}
               confirmation={confirmations.lunch}
               onConfirm={(confirmed) => handleConfirmation('lunch', confirmed)}
-              onShowQR={() => setShowQRModalFor(confirmations.lunch)}
             />
             <MealCard
               title="☕ Evening Snack"
               items={groupedMenu.snack}
               confirmation={confirmations.snack}
               onConfirm={(confirmed) => handleConfirmation('snack', confirmed)}
-              onShowQR={() => setShowQRModalFor(confirmations.snack)}
             />
 
             {/* Message if no menu is set */}
@@ -320,13 +317,7 @@ export default function EmployeeDashboard() {
 
 
 
-        {/* QR Code Modal */}
-        {showQRModalFor && (
-          <QRCodeModal
-            confirmation={showQRModalFor}
-            onClose={() => setShowQRModalFor(null)}
-          />
-        )}
+
       </main>
     </div>
   );

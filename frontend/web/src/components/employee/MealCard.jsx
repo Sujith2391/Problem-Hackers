@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function MealCard({ title, items, confirmation, onConfirm, onShowQR }) {
+export default function MealCard({ title, items, confirmation, onConfirm }) {
   // If no items for this meal, don't show the card
   if (items.length === 0) {
     return null;
@@ -53,17 +53,7 @@ export default function MealCard({ title, items, confirmation, onConfirm, onShow
         </button>
       </div>
 
-      {/* Show QR Code Button - Only if confirmed */}
-      {confirmation?.confirmed === true && (
-        <div className="pt-4 border-t border-gray-200 mt-4">
-          <button
-            onClick={() => onShowQR()}
-            className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            📱 Show QR Code
-          </button>
-        </div>
-      )}
+
     </div>
   );
 }

@@ -12,6 +12,8 @@ const getAuthToken = async () => {
   return data.session?.access_token;
 };
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function ManageMenuPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ export default function ManageMenuPage() {
   const fetchMenu = async () => {
     try {
       const token = await getAuthToken();
-      const response = await fetch('http://localhost:5000/api/admin/menu/tomorrow', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/menu/tomorrow`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -60,7 +62,7 @@ export default function ManageMenuPage() {
     const toastId = toast.loading('Adding item...');
     try {
       const token = await getAuthToken();
-      const response = await fetch('http://localhost:5000/api/admin/menu', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/menu`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +97,7 @@ export default function ManageMenuPage() {
     
     try {
       const token = await getAuthToken();
-      const response = await fetch(`http://localhost:5000/api/admin/menu/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/menu/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
