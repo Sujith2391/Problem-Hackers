@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 import MealCard from '../components/employee/MealCard';
+import SkeletonLoader from '../components/common/SkeletonLoader';
 
 import { format, addDays } from 'date-fns'; // We use this to get tomorrow's date
 
@@ -121,12 +122,15 @@ export default function EmployeeDashboard() {
     try {
       const toastId = toast.loading('Updating status...');
 
+      // If clicking the same status, clear it (set to null)
+      const statusToSet = userStatus === newStatus ? null : newStatus;
+
       const { data, error } = await supabase
         .from('user_daily_status')
         .upsert({
           user_id: user.id,
           date: tomorrow,
-          status: newStatus
+          status: statusToSet
         }, {
           onConflict: 'user_id,date'
         })
@@ -136,10 +140,10 @@ export default function EmployeeDashboard() {
       if (error) throw error;
 
       setUserStatus(data.status);
-      toast.success('Status updated!', { id: toastId });
+      toast.success(statusToSet ? 'Status updated!' : 'Status cleared!', { id: toastId });
 
       // If user is WFH or on leave, cancel their meals
-      if (newStatus === 'wfh' || newStatus === 'leave') {
+      if (statusToSet === 'wfh' || statusToSet === 'leave') {
         await handleConfirmation('breakfast', false);
         await handleConfirmation('lunch', false);
         await handleConfirmation('snack', false);
@@ -188,16 +192,31 @@ export default function EmployeeDashboard() {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         
-        {/* Yellow Alert Banner */}
-        <div className="bg-yellow-100 border-l-4 border-yellow-400 p-4 mb-6 rounded-md">
-          <div className="flex">
-            <div className="ml-3">
-              <p className="text-sm text-yellow-700">
-                Confirm your meals for tomorrow by <strong>9:00 PM tonight</strong>.
-              </p>
+        {/* Deadline Warning Banner */}
+        {new Date().getHours() >= 21 && (
+          <div className="bg-red-100 border-l-4 border-red-400 p-4 mb-6 rounded-md">
+            <div className="flex">
+              <div className="ml-3">
+                <p className="text-sm text-red-700">
+                  <strong>Confirmation Deadline Passed.</strong> You cannot change your selection.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Yellow Alert Banner */}
+        {new Date().getHours() < 21 && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-400 p-4 mb-6 rounded-md">
+            <div className="flex">
+              <div className="ml-3">
+                <p className="text-sm text-yellow-700">
+                  Confirm your meals for tomorrow by <strong>9:00 PM tonight</strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Date Header */}
         <div className="mb-6">
@@ -218,9 +237,12 @@ export default function EmployeeDashboard() {
             {/* WFO Button */}
             <button
               onClick={() => handleStatusUpdate('wfo')}
+              disabled={new Date().getHours() >= 21}
               className={`flex-1 py-3 rounded-lg font-medium transition-colors ${
                 userStatus === 'wfo'
                   ? 'bg-blue-600 text-white shadow-lg'
+                  : new Date().getHours() >= 21
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-100 text-gray-700 hover:bg-blue-100'
               }`}
             >
@@ -229,9 +251,12 @@ export default function EmployeeDashboard() {
             {/* WFH Button */}
             <button
               onClick={() => handleStatusUpdate('wfh')}
+              disabled={new Date().getHours() >= 21}
               className={`flex-1 py-3 rounded-lg font-medium transition-colors ${
                 userStatus === 'wfh'
                   ? 'bg-green-600 text-white shadow-lg'
+                  : new Date().getHours() >= 21
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-100 text-gray-700 hover:bg-green-100'
               }`}
             >
@@ -240,9 +265,12 @@ export default function EmployeeDashboard() {
             {/* Leave Button */}
             <button
               onClick={() => handleStatusUpdate('leave')}
+              disabled={new Date().getHours() >= 21}
               className={`flex-1 py-3 rounded-lg font-medium transition-colors ${
                 userStatus === 'leave'
                   ? 'bg-red-600 text-white shadow-lg'
+                  : new Date().getHours() >= 21
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-100 text-gray-700 hover:bg-red-100'
               }`}
             >
@@ -260,18 +288,21 @@ export default function EmployeeDashboard() {
               items={groupedMenu.breakfast}
               confirmation={confirmations.breakfast}
               onConfirm={(confirmed) => handleConfirmation('breakfast', confirmed)}
+              disabled={new Date().getHours() >= 21}
             />
             <MealCard
               title="🍛 Lunch"
               items={groupedMenu.lunch}
               confirmation={confirmations.lunch}
               onConfirm={(confirmed) => handleConfirmation('lunch', confirmed)}
+              disabled={new Date().getHours() >= 21}
             />
             <MealCard
               title="☕ Evening Snack"
               items={groupedMenu.snack}
               confirmation={confirmations.snack}
               onConfirm={(confirmed) => handleConfirmation('snack', confirmed)}
+              disabled={new Date().getHours() >= 21}
             />
 
             {/* Message if no menu is set */}
@@ -307,13 +338,8 @@ export default function EmployeeDashboard() {
           </div>
         )}
 
-        {/* Loading Spinner */}
-        {loading && (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-gray-500">Loading menu...</p>
-          </div>
-        )}
+        {/* Loading Skeleton */}
+        {loading && <SkeletonLoader />}
 
 
 
