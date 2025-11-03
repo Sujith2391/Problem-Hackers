@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { format, addDays } from 'date-fns';
@@ -107,26 +108,26 @@ export default function AdminDashboard() {
           <StatCard title="☕ Evening Snack" count={stats.snack} color="blue" />
         </div>
 
-        {/* Action Buttons (Future Features) */}
+        {/* Action Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow opacity-60 cursor-not-allowed">
+          <Link to="/admin/menu" className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
             <div className="text-center">
               <div className="text-3xl mb-2">📝</div>
-              <h3 className="font-semibold text-gray-900">Manage Menu (v2)</h3>
+              <h3 className="font-semibold text-gray-900">Manage Menu</h3>
               <p className="text-sm text-gray-600 mt-1">
                 Add or edit tomorrow's menu items
               </p>
             </div>
-          </button>
-          <button className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow opacity-60 cursor-not-allowed">
+          </Link>
+          <Link to="/admin/reports" className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
             <div className="text-center">
               <div className="text-3xl mb-2">📈</div>
-              <h3 className="font-semibold text-gray-900">Waste Reports (v2)</h3>
+              <h3 className="font-semibold text-gray-900">Waste Reports</h3>
               <p className="text-sm text-gray-600 mt-1">
                 View historical data and waste analytics
               </p>
             </div>
-          </button>
+          </Link>
         </div>
       </main>
     </div>

@@ -6,6 +6,7 @@ import EmployeeDashboard from './pages/EmployeeDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import ManageMenuPage from './pages/ManageMenuPage';
 import UserManagementPage from './pages/UserManagementPage';
+import WasteReportsPage from './pages/WasteReportsPage';
 import { Toaster } from 'react-hot-toast';
 
 // Add these two helper functions right after your imports
@@ -75,6 +76,14 @@ function App() {
           element={
             <ProtectedRoute adminOnly>
               <UserManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reports"
+          element={
+            <ProtectedRoute adminOnly>
+              <WasteReportsPage />
             </ProtectedRoute>
           }
         />
